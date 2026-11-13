@@ -1,0 +1,15 @@
+meta {
+  name: 03. Lịch sử điểm UAS7 của BN (GET /uas7-scores/patient/:id)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/uas7-scores/patient/{{patientId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

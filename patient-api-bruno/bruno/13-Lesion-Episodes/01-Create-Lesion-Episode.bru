@@ -1,0 +1,36 @@
+meta {
+  name: 01. Tạo đợt tổn thương da (POST /lesion-episodes)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/lesion-episodes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "medical_record_id": "{{recordId}}",
+    "name": "Đợt bùng phát buổi tối 13/11",
+    "occurred_at": "2026-11-13 20:00:00",
+    "context_tags": "[\"sau ăn\"]",
+    "medication_name": "Desloratadine 5mg",
+    "description": "Nổi mảng sẩn vùng cánh tay"
+  }
+}
+
+script:post-response {
+  const b = res.getBody();
+  const eid = b && b.data && (b.data.ma_dot_ton_thuong_da || b.data.episode_id);
+  if (eid) { bru.setEnvVar("episodeId", String(eid)); console.log("🔴 Đã lưu {{episodeId}} =", eid); }
+}

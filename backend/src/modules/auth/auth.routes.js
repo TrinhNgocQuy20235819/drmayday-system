@@ -26,7 +26,10 @@ router.post('/change-password', authenticate, authController.changePassword);
 router.post('/create_staff', authenticate, authorize(['ADMIN']), authController.createStaff);
 router.post('/create-staff', authenticate, authorize(['ADMIN']), authController.createStaff);
 
-// Lấy thông tin tài khoản hiện tại (Authenticated Profile)
+// Lấy & cập nhật thông tin tài khoản hiện tại (Authenticated Profile)
 router.get('/me', authenticate, authController.getMe);
+router.get('/profile', authenticate, authController.getMe);
+router.put('/profile', authenticate, authController.updateMe);
+router.patch('/profile', authenticate, authController.updateMe);
 
 module.exports = router;

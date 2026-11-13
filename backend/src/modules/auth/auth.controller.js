@@ -118,6 +118,21 @@ class AuthController {
       next(err);
     }
   }
+
+  /**
+   * Cập nhật thông tin hồ sơ cá nhân (PUT /api/v1/profile)
+   */
+  async updateMe(req, res, next) {
+    try {
+      const data = await authService.updateProfile(req.user.ma_tai_khoan, req.body);
+      return successResponse(res, data, 'Cập nhật hồ sơ thành công', 200, 1000);
+    } catch (err) {
+      if (err.code) {
+        return errorResponse(res, err.message, err.statusCode || 400, err.code);
+      }
+      next(err);
+    }
+  }
 }
 
 module.exports = new AuthController();

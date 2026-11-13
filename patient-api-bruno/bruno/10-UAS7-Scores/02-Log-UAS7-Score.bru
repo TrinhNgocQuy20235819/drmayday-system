@@ -1,0 +1,29 @@
+meta {
+  name: 02. Chấm điểm UAS7 hàng ngày (POST /uas7-scores)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/uas7-scores
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "medical_record_id": "{{recordId}}",
+    "score_date": "2026-11-13",
+    "iss7": "2",
+    "hss7": "2",
+    "note": "Ngứa nhẹ buổi tối"
+  }
+}

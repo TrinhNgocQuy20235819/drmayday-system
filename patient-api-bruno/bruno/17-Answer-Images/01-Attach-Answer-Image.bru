@@ -1,0 +1,32 @@
+meta {
+  name: 01. Gắn ảnh vào câu trả lời (POST /answer-images)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/answer-images
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "answer_id": "{{answerId}}",
+    "attachment_id": "{{attachmentId}}",
+    "option_value": "YES"
+  }
+}
+
+script:post-response {
+  const b = res.getBody();
+  if (b && b.data && b.data.id) { bru.setEnvVar("answerImageId", String(b.data.id)); console.log("🔗 Đã lưu {{answerImageId}} =", b.data.id); }
+}

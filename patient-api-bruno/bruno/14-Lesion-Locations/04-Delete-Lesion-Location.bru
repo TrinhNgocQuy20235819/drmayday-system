@@ -1,0 +1,15 @@
+meta {
+  name: 04. Xóa vị trí tổn thương (DELETE /lesion-locations/:id)
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/lesion-locations/{{locationId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

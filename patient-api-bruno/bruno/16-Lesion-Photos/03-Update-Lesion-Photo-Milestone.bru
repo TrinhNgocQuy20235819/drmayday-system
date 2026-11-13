@@ -1,0 +1,26 @@
+meta {
+  name: 03. Cập nhật mốc tiến triển ảnh (PATCH /lesion-photos/:id/milestone)
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/lesion-photos/{{photoId}}/milestone
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "milestone": "normal",
+    "itch_score": "1"
+  }
+}

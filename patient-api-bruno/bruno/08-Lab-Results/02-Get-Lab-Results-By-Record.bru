@@ -1,0 +1,15 @@
+meta {
+  name: 02. Xem kết quả xét nghiệm theo bệnh án (GET /lab-results/:recordId)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/lab-results/{{recordId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

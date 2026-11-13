@@ -5,8 +5,10 @@ const errorHandler = (err, req, res, next) => {
 
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Lỗi máy chủ nội bộ';
+  const code = err.code || 9999;
+  const detail = process.env.NODE_ENV === 'development' ? err.stack : null;
 
-  return errorResponse(res, message, statusCode, process.env.NODE_ENV === 'development' ? err.stack : null);
+  return errorResponse(res, message, statusCode, code, detail);
 };
 
 const notFoundHandler = (req, res) => {

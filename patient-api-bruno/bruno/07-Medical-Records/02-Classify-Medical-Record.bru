@@ -1,0 +1,30 @@
+meta {
+  name: 02. Phân loại bệnh án Cấp/Mạn (POST /medical_records/classify)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/medical_records/classify
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "answers": [
+      {
+        "question_id": "Q_DURATION_WEEKS",
+        "option_value": "GE_6_WEEKS"
+      }
+    ]
+  }
+}

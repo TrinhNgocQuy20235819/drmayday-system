@@ -1,0 +1,15 @@
+meta {
+  name: 11. Lịch sử timeline hồ sơ (GET /medical_records/:id/history)
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/medical_records/{{recordId}}/history
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

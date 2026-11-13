@@ -1,0 +1,15 @@
+meta {
+  name: 05. Lịch sử bệnh án theo BN (GET /medical_records/patients/:id/history)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/medical_records/patients/{{patientId}}/history
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

@@ -1,0 +1,36 @@
+meta {
+  name: 03. Đăng nhập Bác sĩ (POST /auth/login)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "phone": "{{doctorUser}}",
+    "password": "{{doctorPassword}}"
+  }
+}
+
+script:pre-request {
+  if (!bru.getEnvVar("doctorUser")) { bru.setEnvVar("doctorUser", "0901000002"); }
+  if (!bru.getEnvVar("doctorPassword")) { bru.setEnvVar("doctorPassword", "Doctor@123"); }
+}
+
+script:post-response {
+  const b = res.getBody();
+  const token = b && b.data && (b.data.access_token || b.data.token);
+  if (res.getStatus() === 200 && token) {
+    bru.setEnvVar("doctorToken", token);
+    console.log("✅ Đã lưu {{doctorToken}}");
+  }
+}

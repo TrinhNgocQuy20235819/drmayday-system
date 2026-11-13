@@ -1,0 +1,15 @@
+meta {
+  name: 01. Xem hồ sơ cá nhân bệnh nhân (GET /profile)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/profile
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

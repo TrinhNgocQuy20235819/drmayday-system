@@ -1,0 +1,42 @@
+meta {
+  name: 01. Đăng ký Bệnh nhân mới (POST /auth/signup)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/signup
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "full_name": "Nguyễn Văn Test Bệnh Nhân",
+    "phone": "{{testPatientPhone}}",
+    "password": "{{testPatientPassword}}",
+    "gender": "other",
+    "year_of_birth": 1996
+  }
+}
+
+script:pre-request {
+  const rand = Math.floor(10000000 + Math.random() * 90000000);
+  const phone = "09" + rand;
+  bru.setEnvVar("testPatientPhone", phone);
+  bru.setEnvVar("testPatientUser", phone);
+  if (!bru.getEnvVar("testPatientPassword")) { bru.setEnvVar("testPatientPassword", "Patient@123"); }
+}
+
+script:post-response {
+  const b = res.getBody();
+  if ((res.getStatus() === 200 || res.getStatus() === 201) && b && b.data) {
+    const pid = b.data.ma_benh_nhan || b.data.ma_nguoi;
+    if (pid) bru.setEnvVar("patientId", String(pid));
+    console.log("✅ Đăng ký thành công SĐT:", bru.getEnvVar("testPatientUser"), "| ma_benh_nhan:", pid);
+  }
+}

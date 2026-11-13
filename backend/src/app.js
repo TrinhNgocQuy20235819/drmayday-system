@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-require('dotenv').config();
+require('./config/env');
 
 const { notFoundHandler, errorHandler } = require('./middlewares/error.middleware');
 
@@ -9,6 +9,7 @@ const { notFoundHandler, errorHandler } = require('./middlewares/error.middlewar
 const authRoutes = require('./modules/auth/auth.routes');
 const adminRoutes = require('./modules/admin/admin.routes');
 const patientRoutes = require('./modules/patient/patient.routes');
+const { mountPatientFlowRoutes } = require('./modules/patient/patientFlow.routes');
 const clinicalRoutes = require('./modules/clinical/clinical.routes');
 const lesionRoutes = require('./modules/lesion/lesion.routes');
 
@@ -32,6 +33,8 @@ app.use('/api/auth', authRoutes);                  // Chuẩn theo Google Sheets
 app.use('/api/v1/auth', authRoutes);               // Tương thích ngược phiên bản v1
 app.use('/api/v1/admin', adminRoutes);         // Slide 3 & 4 (Admin, Topology, Phòng khám)
 app.use('/api/v1/patients', patientRoutes);    // Slide 5 (Bệnh nhân & Hồ sơ bệnh án)
+app.use('/api/v1/patient-mgmt', patientRoutes); // Alias tương thích Bruno của drmayday-system
+mountPatientFlowRoutes(app);                   // Toàn bộ quy trình Backend Bệnh nhân (Slides 1,2,5,6,7,8,9,11)
 app.use('/api/v1/clinical', clinicalRoutes);   // Slide 6 & 7 (Lâm sàng, Đơn thuốc, UAS7)
 app.use('/api/v1/lesions', lesionRoutes);      // Slide 8, 9, 10, 11 (Tổn thương da, Ảnh, Supabase)
 

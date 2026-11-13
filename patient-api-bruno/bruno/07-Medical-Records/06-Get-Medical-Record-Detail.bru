@@ -1,0 +1,15 @@
+meta {
+  name: 06. Chi tiết hồ sơ bệnh án (GET /medical_records/:id)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/medical_records/{{recordId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

@@ -1,0 +1,15 @@
+meta {
+  name: 02. Lấy ảnh theo vị trí (GET /lesion-photos/location/:locationId)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/lesion-photos/location/{{locationId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

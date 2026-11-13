@@ -1,0 +1,15 @@
+meta {
+  name: 01. Câu hỏi phân loại bệnh án (GET /medical_records/classify-questions)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/medical_records/classify-questions
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

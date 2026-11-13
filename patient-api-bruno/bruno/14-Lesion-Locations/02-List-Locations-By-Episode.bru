@@ -1,0 +1,15 @@
+meta {
+  name: 02. Danh sách vị trí theo đợt (GET /lesion-locations/episode/:episodeId)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/lesion-locations/episode/{{episodeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}

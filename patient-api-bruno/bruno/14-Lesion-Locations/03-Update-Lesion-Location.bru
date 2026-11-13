@@ -1,0 +1,26 @@
+meta {
+  name: 03. Cập nhật vị trí tổn thương (PATCH /lesion-locations/:id)
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/lesion-locations/{{locationId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "body_part": "Cẳng tay phải",
+    "notes": "Cập nhật ghi chú vị trí tổn thương"
+  }
+}

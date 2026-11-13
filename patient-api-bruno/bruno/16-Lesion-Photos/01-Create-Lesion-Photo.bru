@@ -1,0 +1,38 @@
+meta {
+  name: 01. Lưu ảnh tiến triển 3 mốc (POST /lesion-photos)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/lesion-photos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "episode_id": "{{episodeId}}",
+    "location_id": "{{locationId}}",
+    "attachment_id": "{{attachmentId}}",
+    "milestone": "peak",
+    "itch_score": "6",
+    "pain_score": "2",
+    "burn_score": "4",
+    "hives_count": "12"
+  }
+}
+
+script:post-response {
+  const b = res.getBody();
+  const pid = b && b.data && (b.data.ma_anh || b.data.photo_id);
+  if (pid) { bru.setEnvVar("photoId", String(pid)); console.log("📷 Đã lưu {{photoId}} =", pid); }
+}

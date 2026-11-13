@@ -1,0 +1,39 @@
+meta {
+  name: 02. Đăng nhập Bệnh nhân (POST /auth/login)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "phone": "{{testPatientUser}}",
+    "password": "{{testPatientPassword}}"
+  }
+}
+
+script:pre-request {
+  if (!bru.getEnvVar("testPatientUser")) { bru.setEnvVar("testPatientUser", "0912345678"); }
+  if (!bru.getEnvVar("testPatientPassword")) { bru.setEnvVar("testPatientPassword", "Patient@123"); }
+}
+
+script:post-response {
+  const b = res.getBody();
+  const token = b && b.data && (b.data.access_token || b.data.token);
+  if (res.getStatus() === 200 && token) {
+    bru.setEnvVar("patientToken", token);
+    const u = b.data.user_info || {};
+    const pid = u.ma_benh_nhan || u.ma_nguoi || u.id;
+    if (pid) bru.setEnvVar("patientId", String(pid));
+    console.log("✅ Đã lưu {{patientToken}} và {{patientId}} =", pid);
+  }
+}

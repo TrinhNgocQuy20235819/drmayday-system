@@ -1,0 +1,33 @@
+meta {
+  name: 01. Kê đơn thuốc (POST /prescriptions)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/prescriptions
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{doctorToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "ma_ho_so": "{{recordId}}",
+    "ghi_chu_dieu_tri": "Uống 1 viên buổi tối trước khi ngủ",
+    "items": [
+      {
+        "ten_thuoc_bo_sung": "Cetirizine 10mg",
+        "lieu_dung": "1 viên/tối",
+        "thoi_gian_dung": "14 ngày"
+      }
+    ]
+  }
+}

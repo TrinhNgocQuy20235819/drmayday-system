@@ -13,6 +13,14 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model TestSubConnection {
+  id       Int       @id @default(autoincrement())
+  ghiChu   String    @map("ghi_chu")
+  thoiDiem DateTime? @default(now()) @map("thoi_diem") @db.Timestamptz(6)
+
+  @@map("test_sub_connection")
+}
+
 // ------------------------------------------------------------------------------
 // 1. TOKEN BLACKLIST (Auth & Logout - Slide 2)
 // ------------------------------------------------------------------------------
@@ -106,16 +114,20 @@ model TemplateSection {
 }
 
 model TemplateQuestion {
-  id           Int             @id @default(autoincrement())
-  sectionId    Int             @map("section_id")
-  questionText String          @map("question_text")
-  questionType String          @map("question_type") // TEXT, NUMBER, SELECT, MULTI_SELECT, RADIO, DATE
-  options      Json?           @map("options")       // Mảng các lựa chọn nếu là SELECT/RADIO
-  isRequired   Boolean         @default(false) @map("is_required")
-  orderIndex   Int             @default(0) @map("order_index")
-  createdAt    DateTime        @default(now()) @map("created_at")
-  updatedAt    DateTime        @updatedAt @map("updated_at")
-  section      TemplateSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  id               Int             @id @default(autoincrement())
+  sectionId        Int             @map("section_id")
+  questionCode     String?         @map("question_code")
+  questionText     String          @map("question_text")
+  questionType     String          @map("question_type") // TEXT, NUMBER, SELECT, MULTI_SELECT, RADIO, DATE
+  options          Json?           @map("options")       // Mảng các lựa chọn nếu là SELECT/RADIO
+  isRequired       Boolean         @default(false) @map("is_required")
+  parentQuestionId Int?            @map("parent_question_id")
+  showIfAnswer     String?         @map("show_if_answer")
+  filledBy         String?         @default("both") @map("filled_by")
+  orderIndex       Int             @default(0) @map("order_index")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  section          TemplateSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
   @@map("template_questions")
 }
@@ -145,4 +157,129 @@ model AnhTonThuongMoRong {
   @@index([maHoSo])
   @@index([maTaiKhoan])
   @@map("anh_ton_thuong_mo_rong")
+}
+
+// ------------------------------------------------------------------------------
+// 6. HỖ TRỢ DỮ LIỆU PHỤ TRỢ BỆNH NHÂN (Thay runtime_store.json -> Supabase Sub DB)
+// ------------------------------------------------------------------------------
+model PatientExtraProfile {
+  maNguoi                BigInt   @id @map("ma_nguoi")
+  genderRaw              String?  @map("gender_raw") // Hỗ trợ 'other' ngoài ('Nam','Nu') của Main DB
+  yearOfBirth            Int?     @map("year_of_birth")
+  healthInsuranceValidate String? @map("health_insurance_validate")
+  medicalHistory         String?  @map("medical_history")
+  allergyHistory         String?  @map("allergy_history")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  @@map("patient_extra_profiles")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  maTaiKhoan BigInt  @map("ma_tai_khoan")
+  phone     String   @map("phone")
+  otpCode   String   @map("otp_code")
+  expiresAt DateTime @map("expires_at")
+  isUsed    Boolean  @default(false) @map("is_used")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([phone])
+  @@map("password_reset_tokens")
+}
+
+model MedicalRecordMeta {
+  maHoSo            BigInt    @id @map("ma_ho_so")
+  maBenhNhan        BigInt    @map("ma_benh_nhan")
+  templateId        Int?      @map("template_id")
+  recordSubtype     String?   @map("record_subtype") // URTICARIA_ACUTE | URTICARIA_CHRONIC_INIT | URTICARIA_FOLLOWUP
+  screeningDecision String?   @map("screening_decision")
+  lyDoDenKham       String?   @map("ly_do_den_kham")
+  trieuChungChinh   String?   @map("trieu_chung_chinh")
+  thoiGianKhoiPhat  String?   @map("thoi_gian_khoi_phat")
+  doctorConclusion  String?   @map("doctor_conclusion")
+  doctorNotes       String?   @map("doctor_notes")
+  assignedDoctorId  BigInt?   @map("assigned_doctor_id")
+  createdBy         BigInt?   @map("created_by")
+  lockedAt          DateTime? @map("locked_at")
+  closedAt          DateTime? @map("closed_at")
+  closedBy          BigInt?   @map("closed_by")
+  acceptedAt        DateTime? @map("accepted_at")
+  acceptedBy        BigInt?   @map("accepted_by")
+  completedAt       DateTime? @map("completed_at")
+  completedBy       BigInt?   @map("completed_by")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@index([maBenhNhan])
+  @@map("medical_record_meta")
+}
+
+model MedicalRecordAnswer {
+  id          Int      @id @default(autoincrement())
+  maHoSo      BigInt   @map("ma_ho_so")
+  questionId  Int      @map("question_id")
+  answerValue String?  @map("answer_value")
+  answerJson  Json?    @map("answer_json")
+  answeredBy  BigInt?  @map("answered_by")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([maHoSo, questionId])
+  @@index([maHoSo])
+  @@map("medical_record_answers")
+}
+
+model AnswerImage {
+  id           Int      @id @default(autoincrement())
+  maHoSo       BigInt   @map("ma_ho_so")
+  questionId   Int      @map("question_id")
+  attachmentId BigInt   @map("attachment_id")
+  publicUrl    String?  @map("public_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@unique([maHoSo, questionId, attachmentId])
+  @@index([maHoSo, questionId])
+  @@map("answer_images")
+}
+
+model Uas7Note {
+  id                Int      @id @default(autoincrement())
+  maBenhNhan        BigInt   @map("ma_benh_nhan")
+  maHoSoMan         BigInt?  @map("ma_ho_so_man")
+  scoreDate         String   @map("score_date") // YYYY-MM-DD
+  whealScore        Int      @map("wheal_score")
+  itchScore         Int      @map("itch_score")
+  uasDaily          Int      @map("uas_daily")
+  notes             String?  @map("notes")
+  medicationChanged Boolean  @default(false) @map("medication_changed")
+  medicationStatus  String?  @map("medication_status")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@unique([maBenhNhan, scoreDate])
+  @@map("uas7_notes")
+}
+
+model LesionEpisodeMeta {
+  maDotTonThuong  BigInt    @id @map("ma_dot_ton_thuong")
+  maHoSo          BigInt    @map("ma_ho_so")
+  maBenhNhan      BigInt    @map("ma_benh_nhan")
+  hasLesions      Boolean   @default(true) @map("has_lesions")
+  triggerCategory String?   @map("trigger_category")
+  endedAt         DateTime? @map("ended_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([maHoSo])
+  @@map("lesion_episode_meta")
+}
+
+model LesionLocationMeta {
+  maViTriTonThuong BigInt   @id @map("ma_vi_tri_ton_thuong")
+  maDotTonThuong   BigInt   @map("ma_dot_ton_thuong")
+  bodyPart         String   @map("body_part")
+  lesionType       String?  @map("lesion_type")
+  itchScoreNrs     Int?     @map("itch_score_nrs")
+  painScoreNrs     Int?     @map("pain_score_nrs")
+  notes            String?  @map("notes")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@index([maDotTonThuong])
+  @@map("lesion_location_meta")
 }

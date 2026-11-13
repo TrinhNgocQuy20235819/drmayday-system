@@ -1,0 +1,39 @@
+meta {
+  name: 02. Cập nhật hồ sơ cá nhân bệnh nhân (PUT /profile)
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/profile
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{patientToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "full_name": "Nguyễn Văn Bệnh Nhân",
+    "gender": "Nam",
+    "ngay_sinh": "1995-05-20",
+    "career": "student",
+    "ethnic": "Kinh",
+    "hamlet_address": "Số 1 Đại Cồ Việt",
+    "commune_address": "Bách Khoa",
+    "city_address": "Hà Nội",
+    "health_insurance_number": "DN4012345678901",
+    "health_insurance_validate": "2027-12-31",
+    "next_of_kin_name": "Nguyễn Thị Người Nhà",
+    "next_of_kin_phone": "0988777666",
+    "next_of_kin_relationship": "Mẹ",
+    "medical_history": "Viêm mũi dị ứng",
+    "allergy_history": "Hải sản"
+  }
+}
